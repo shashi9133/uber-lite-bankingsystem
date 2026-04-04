@@ -11,7 +11,7 @@
     <name>api-gateway</name>
     <description>Uber Lite API Gateway</description>
 
-    <!-- 🔥 Parent (VERY IMPORTANT) -->
+    
     <parent>
         <groupId>org.springframework.boot</groupId>
         <artifactId>spring-boot-starter-parent</artifactId>
@@ -19,22 +19,22 @@
         <relativePath/>
     </parent>
 
-    <!-- 🔥 PROPERTIES -->
+    
     <properties>
         <java.version>17</java.version>
         <spring-cloud.version>2024.0.1</spring-cloud.version>
     </properties>
 
-    <!-- 🔥 DEPENDENCIES -->
+    
     <dependencies>
 
-        <!-- ✅ Spring Cloud Gateway (CORRECT ONE) -->
+        
         <dependency>
             <groupId>org.springframework.cloud</groupId>
             <artifactId>spring-cloud-starter-gateway</artifactId>
         </dependency>
 
-        <!-- ✅ JWT -->
+        
         <dependency>
             <groupId>io.jsonwebtoken</groupId>
             <artifactId>jjwt-api</artifactId>
@@ -55,7 +55,7 @@
             <scope>runtime</scope>
         </dependency>
 
-        <!-- (Optional but helpful for logs/debug) -->
+        
         <dependency>
             <groupId>org.springframework.boot</groupId>
             <artifactId>spring-boot-starter-actuator</artifactId>
@@ -63,7 +63,7 @@
 
     </dependencies>
 
-    <!-- 🔥 SPRING CLOUD VERSION MANAGEMENT -->
+    
     <dependencyManagement>
         <dependencies>
             <dependency>
@@ -76,7 +76,7 @@
         </dependencies>
     </dependencyManagement>
 
-    <!-- 🔥 BUILD -->
+    
     <build>
         <plugins>
             <plugin>

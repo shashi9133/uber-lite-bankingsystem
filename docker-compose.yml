@@ -1,33 +1,57 @@
-version: '3'
+version: '3.8'
 
 services:
 
+  api-gateway:
+    build: ./api-gateway
+    container_name: api-gateway
+    ports:
+      - "8080:8080"
+    depends_on:
+      - user-service
+      - driver-service
+      - trip-service
+      - mysql
+    networks:
+      - uber-network
+
   user-service:
     build: ./user-service
+    container_name: user-service
     ports:
       - "8081:8081"
+    depends_on:
+      - mysql
+    networks:
+      - uber-network
 
   driver-service:
     build: ./driver-service
+    container_name: driver-service
     ports:
       - "8082:8082"
+    networks:
+      - uber-network
 
   trip-service:
     build: ./trip-service
+    container_name: trip-service
     ports:
       - "8083:8083"
+    networks:
+      - uber-network
 
-  notification-service:
-    build: ./notification-service
+  mysql:
+    image: mysql:8
+    container_name: mysql
+    environment:
+      MYSQL_ROOT_PASSWORD: root
+      MYSQL_DATABASE: uber
     ports:
-      - "8084:8084"
+      - "3306:3306"
+    networks:
+      - uber-network
 
-  payment-service:
-    build: ./payment-service
-    ports:
-      - "8085:8085"
-
-  api-gateway:
-    build: ./api-gateway
-    ports:
-      - "8080:8080"
+networks:
+  uber-network:
+    driver: bridge
