@@ -2,45 +2,6 @@ version: '3.8'
 
 services:
 
-  api-gateway:
-    build: ./api-gateway
-    container_name: api-gateway
-    ports:
-      - "8080:8080"
-    depends_on:
-      - user-service
-      - driver-service
-      - trip-service
-      - mysql
-    networks:
-      - uber-network
-
-  user-service:
-    build: ./user-service
-    container_name: user-service
-    ports:
-      - "8081:8081"
-    depends_on:
-      - mysql
-    networks:
-      - uber-network
-
-  driver-service:
-    build: ./driver-service
-    container_name: driver-service
-    ports:
-      - "8082:8082"
-    networks:
-      - uber-network
-
-  trip-service:
-    build: ./trip-service
-    container_name: trip-service
-    ports:
-      - "8083:8083"
-    networks:
-      - uber-network
-
   mysql:
     image: mysql:8
     container_name: mysql
@@ -52,6 +13,91 @@ services:
     networks:
       - uber-network
 
+  zookeeper:
+    image: confluentinc/cp-zookeeper:7.0.1
+    container_name: zookeeper
+    environment:
+      ZOOKEEPER_CLIENT_PORT: 2181
+    networks:
+      - uber-network
+
+  kafka:
+    image: confluentinc/cp-kafka:7.0.1
+    container_name: kafka
+    depends_on:
+      - zookeeper
+    ports:
+      - "9092:9092"
+    environment:
+      KAFKA_ZOOKEEPER_CONNECT: zookeeper:2181
+      KAFKA_ADVERTISED_LISTENERS: PLAINTEXT://kafka:9092
+      KAFKA_OFFSETS_TOPIC_REPLICATION_FACTOR: 1
+    networks:
+      - uber-network
+
+  user-service:
+    image: shashi9133/user-service:latest
+    container_name: user-service
+    ports:
+      - "8081:8081"
+    depends_on:
+      - mysql
+    networks:
+      - uber-network
+
+  driver-service:
+    image: shashi9133/driver-service:latest
+    container_name: driver-service
+    ports:
+      - "8082:8082"
+    depends_on:
+      - mysql
+    networks:
+      - uber-network
+
+  trip-service:
+    image: shashi9133/trip-service:latest
+    container_name: trip-service
+    ports:
+      - "8083:8083"
+    depends_on:
+      - mysql
+      - kafka
+    networks:
+      - uber-network
+
+  payment-service:
+    image: shashi9133/payment-service:latest
+    container_name: payment-service
+    ports:
+      - "8085:8085"
+    depends_on:
+      - mysql
+      - kafka
+    networks:
+      - uber-network
+
+  notification-service:
+    image: shashi9133/notification-service:latest
+    container_name: notification-service
+    ports:
+      - "8084:8084"
+    depends_on:
+      - kafka
+    networks:
+      - uber-network
+
+  api-gateway:
+    image: shashi9133/api-gateway:latest
+    container_name: api-gateway
+    ports:
+      - "8080:8080"
+    depends_on:
+      - user-service
+      - driver-service
+      - trip-service
+    networks:
+      - uber-network
+
 networks:
   uber-network:
-    driver: bridge
